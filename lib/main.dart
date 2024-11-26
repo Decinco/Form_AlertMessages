@@ -21,11 +21,11 @@ class MyCustomForm extends StatefulWidget {
 }
 
 class _MyCustomFormState extends State<MyCustomForm> {
-  final myController = TextEditingController();
+  final textToShow = TextEditingController();
 
   @override
   void dispose() {
-    myController.dispose();
+    textToShow.dispose();
     super.dispose();
   }
 
@@ -38,40 +38,114 @@ class _MyCustomFormState extends State<MyCustomForm> {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: TextField(
-          controller: myController,
+          controller: textToShow,
         ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          showModalBottomSheet(
-              backgroundColor: Colors.transparent,
-              context: context,
-              builder: (BuildContext context) {
-                return Container(
-                    decoration: const BoxDecoration(
-                      color: Colors.amber,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(25),
-                        topRight: Radius.circular(25),
-                      ),
-                    ),
-                    height: 200,
-                    child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          Text(myController.text),
-                          ElevatedButton(
-                            onPressed: () => Navigator.of(context).pop(),
-                            child: const Text('Tancar BottomSheet'),
-                          )
-                        ],
-                      ),
-                    ));
-              });
+          showDialog(
+            context: context,
+            barrierDismissible: true,
+            builder: (context) {
+              return SimpleDialog(
+                title: const Text("Escull   un tipus de Diàleg"),
+                children:[
+                  SimpleDialogOption(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      showDialog(context: context,
+                        barrierDismissible: true,
+                        builder: (context) {
+                          return SimpleDialog(
+                            title: const Text("Simple Dialog"),
+                            children: [
+                              SimpleDialogOption(
+                                child: Text(textToShow.text),
+                              )
+                            ],
+                          );
+                        });
+                    },
+                    child: Text("Simple Dialog"),
+                  ),
+
+                  SimpleDialogOption(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      showDialog(
+                          context: context,
+                          barrierDismissible: true,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: const Text("Alert Dialog"),
+                              content: Text(textToShow.text),
+                              actions: [
+                                ElevatedButton(
+                                    onPressed: () => Navigator.of(context).pop(),
+                                    child: const Text("OK")
+                                )
+                              ],
+                            );
+                          });
+                    },
+                    child: Text("Alert Dialog"),
+                  ),
+
+                  SimpleDialogOption(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(textToShow.text),
+                          duration: Duration(seconds: 1),
+                        )
+                      );
+                    },
+                    child: Text("Snack Bar"),
+                  ),
+
+                  SimpleDialogOption(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      showModalBottomSheet(
+                          context: context,
+                          builder: (context) {
+                            return Container(
+                              decoration: const BoxDecoration(
+                                color: Colors.amber,
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(10),
+                                  topRight: Radius.circular(10)
+                                )
+                              ),
+                              height: 200,
+                              child: Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(textToShow.text),
+                                    ElevatedButton(
+                                        onPressed: () => Navigator.of(context).pop(),
+                                        child: const Text("Tancar BottomSheet")
+                                    )
+                                  ],
+                                ),
+                              ),
+                            );
+                          }
+                      );
+                    },
+                    child: Text("ModalBottomSheet"),
+                  ),
+                ],
+
+              );
+            }
+          );
         },
         tooltip: 'Mostra el valor!',
+        backgroundColor: Colors.purple,
         child: const Icon(Icons.text_fields),
       ),
     );
